@@ -14,7 +14,7 @@
 # limitations under the License.
 
 NAME="google-compute-engine"
-VERSION="20190916.00"
+VERSION="20200522.02"
 
 rpm_working_dir=/tmp/rpmpackage/${NAME}-${VERSION}
 working_dir=${PWD}

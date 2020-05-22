@@ -33,6 +33,7 @@ Requires: python3-google-compute-engine >= 1:20190916.00
 Requires: python-google-compute-engine >= 1:20190916.00
 %endif
 Requires: rsyslog
+Obsoletes: google-guest-agent
 
 BuildArch: noarch
 BuildRequires: systemd
@@ -96,6 +97,13 @@ fi
 if [ -f /lib/systemd/system/google-network-setup.service ]; then
   systemctl stop --no-block google-network-setup
   systemctl disable google-network-setup.service
+fi
+
+%pre
+if [ $1 -gt 1 ] ; then
+  systemctl stop google-guest-agent.service 2>&1 || :
+  systemctl --no-reload disable google-guest-agent.service 2>&1 || :
+  systemctl daemon-reload >/dev/null 2>&1 || :
 fi
 
 %preun
