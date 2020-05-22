@@ -27,8 +27,9 @@ Url: https://github.com/GoogleCloudPlatform/compute-image-packages
 Source0: %{name}_%{version}.orig.tar.gz
 Requires: curl
 Requires: google-compute-engine-oslogin
-Requires: google-guest-agent
+Requires: python-google-compute-engine >= 1:20190916.00
 Requires: rsyslog
+Obsoletes: google-guest-agent
 
 BuildArch: noarch
 
@@ -60,16 +61,7 @@ cp -a src/lib/udev/rules.d/* %{buildroot}/%{_udevrulesdir}
 if [ $1 -gt 1 ] ; then
   # This is an upgrade. Stop and disable services previously owned by this
   # package, if any.
-  for svc in google-ip-forwarding-daemon google-network-setup \
-    google-network-daemon google-accounts-daemon google-clock-skew-daemon \
-    google-instance-setup; do
-      if systemctl is-enabled ${svc}.service >/dev/null 2>&1; then
-        systemctl --no-reload disable ${svc}.service >/dev/null 2>&1 || :
-        if [ -d /run/systemd/system ]; then
-          systemctl stop ${svc}.service >/dev/null 2>&1 || :
-        fi
-      fi
-  done
+  systemctl stop google-guest-agent.service 2>&1 || :
+  systemctl --no-reload disable google-guest-agent.service 2>&1 || :
   systemctl daemon-reload >/dev/null 2>&1 || :
 fi
-
